@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccuKnox Django Trainee Assignment</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.07);
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --accent-color: #6366f1;
+            --accent-glow: #4f46e5;
+            --success-color: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --error-color: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --terminal-bg: #060913;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px -10px var(--primary-glow);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+        }
+
+        .card p.description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.6rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        }
+
+        .btn:disabled {
+            background: #2e354f;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            color: var(--text-muted);
+        }
+
+        .terminal {
+            background-color: var(--terminal-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.25rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            margin-top: 1.5rem;
+            min-height: 150px;
+            max-height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .terminal-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .terminal-dots span:nth-child(1) { background-color: #ef4444; }
+        .terminal-dots span:nth-child(2) { background-color: #eab308; }
+        .terminal-dots span:nth-child(3) { background-color: #22c55e; }
+
+        .terminal-logs {
+            line-height: 1.6;
+        }
+
+        .log-item {
+            opacity: 0;
+            animation: fadeInLog 0.3s ease forwards;
+            margin-bottom: 4px;
+        }
+
+        .explanation-box {
+            background: var(--success-bg);
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-top: 1.25rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Rectangle Tester Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .row .form-group {
+            flex: 1;
+        }
+
+        .rect-result {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px dashed rgba(99, 102, 241, 0.20);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .rect-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        .rect-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .rect-key {
+            color: #a5b4fc;
+        }
+
+        .rect-val {
+            color: #34d399;
+            font-weight: bold;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInLog {
+            from { opacity: 0; transform: translateX(-5px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top: 2px solid #fff;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <p class="card-tag">AccuKnox Trainee Assignment</p>
+        <h1>Django Signals & Custom Classes</h1>
+        <p>Interactive verification dashboard proving Django Signals characteristics and Python Custom Class iterability.</p>
+    </header>
+
+    <div class="grid">
+        <!-- 1. Synchronous vs Asynchronous -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-tag">Experiment 01</span>
+                <h2>Sync vs Async Execution</h2>
+                <p class="description">
+                    By default, are Django signals executed synchronously or asynchronously? 
+                    This test sends a signal that is blocked with a <code>time.sleep(2)</code> receiver. 
+                    If control returns to the caller only <i>after</i> the sleep finishes, it proves execution is synchronous.
+                </p>
+            </div>
+            <div>
+                <button class="btn" id="btn-sync" onclick="runSyncTest()">
+                    <span>Trigger Sync/Async Proof</span>
+                </button>
+                
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div>sync_async_terminal.log</div>
+                    </div>
+                    <div class="terminal-logs" id="log-sync">Ready to run...</div>
+                </div>
+
+                <div class="explanation-box" id="explain-sync"></div>
+            </div>
+        </div>
+
+        <!-- 2. Same Thread vs Different Thread -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-tag">Experiment 02</span>
+                <h2>Thread Context Execution</h2>
+                <p class="description">
+                    Do Django signals run in the same thread as the caller?
+                    This test retrieves the active Thread ID and Name from both the Caller (View) and the Receiver (Signal Handler) 
+                    and compares them to verify if they share the exact same thread context.
+                </p>
+            </div>
+            <div>
+                <button class="btn" id="btn-thread" onclick="runThreadTest()">
+                    <span>Trigger Thread ID Proof</span>
+                </button>
+                
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div>thread_check_terminal.log</div>
+                    </div>
+                    <div class="terminal-logs" id="log-thread">Ready to run...</div>
+                </div>
+
+                <div class="explanation-box" id="explain-thread"></div>
+            </div>
+        </div>
+
+        <!-- 3. Same Transaction vs Different Transaction -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-tag">Experiment 03</span>
+                <h2>Database Transaction Sharing</h2>
+                <p class="description">
+                    Do Django signals run in the same database transaction as the caller?
+                    This test starts a transaction block, inserts a record, and triggers a signal that inserts another. 
+                    Then, it forces a rollback. If both records disappear, it proves the signal executes in the caller's transaction.
+                </p>
+            </div>
+            <div>
+                <button class="btn" id="btn-transaction" onclick="runTransactionTest()">
+                    <span>Trigger Transaction Proof</span>
+                </button>
+                
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div>transaction_check_terminal.log</div>
+                    </div>
+                    <div class="terminal-logs" id="log-transaction">Ready to run...</div>
+                </div>
+
+                <div class="explanation-box" id="explain-transaction"></div>
+            </div>
+        </div>
+
+        <!-- 4. Custom Classes in Python -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-tag">Python Topic 02</span>
+                <h2>Custom Iterable Rectangle Class</h2>
+                <p class="description">
+                    Create a <code>Rectangle</code> class initialized with <code>length: int</code> and <code>width: int</code>. 
+                    Make it iterable such that yielding returns <code>{'length': value}</code> and then <code>{'width': value}</code>.
+                    Enter inputs below to instantiate and iterate.
+                </p>
+            </div>
+            <div>
+                <form id="rect-form" onsubmit="runRectangleTest(event)">
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="rect-length">Length</label>
+                            <input type="number" id="rect-length" name="length" value="15" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rect-width">Width</label>
+                            <input type="number" id="rect-width" name="width" value="10" min="1" required>
+                        </div>
+                    </div>
+                    <button class="btn" type="submit" id="btn-rect">
+                        <span>Instantiate & Iterate</span>
+                    </button>
+                </form>
+
+                <div class="rect-result" id="rect-result">
+                    <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-muted)">Iteration Output:</h4>
+                    <div id="rect-items-container"></div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.75rem;" id="rect-explanation"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showLoading(btnId, show) {
+        const btn = document.getElementById(btnId);
+        if (show) {
+            btn.disabled = true;
+            btn.dataset.originalHtml = btn.innerHTML;
+            btn.innerHTML = `<span class="loader"></span> <span>Running...</span>`;
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = btn.dataset.originalHtml;
+        }
+    }
+
+    function printLogs(elementId, logs) {
+        const container = document.getElementById(elementId);
+        container.innerHTML = '';
+        logs.forEach((log, index) => {
+            const div = document.createElement('div');
+            div.className = 'log-item';
+            div.style.animationDelay = `${index * 0.1}s`;
+            div.textContent = log;
+            container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function runSyncTest() {
+        showLoading('btn-sync', true);
+        document.getElementById('explain-sync').style.display = 'none';
+        
+        try {
+            const response = await fetch('/test/sync-async/', { method: 'POST' });
+            const data = await response.json();
+            
+            printLogs('log-sync', data.logs);
+            
+            if (data.proven) {
+                const expBox = document.getElementById('explain-sync');
+                expBox.style.display = 'block';
+                expBox.innerHTML = `<strong>Status: PROVEN (Synchronous)</strong><br>${data.explanation}<br><span style="color: #6366f1; font-weight: 600">Total duration: ${data.elapsed} seconds</span>`;
+            }
+        } catch (error) {
+            console.error(error);
+            document.getElementById('log-sync').textContent = 'Error executing request.';
+        } finally {
+            showLoading('btn-sync', false);
+        }
+    }
+
+    async function runThreadTest() {
+        showLoading('btn-thread', true);
+        document.getElementById('explain-thread').style.display = 'none';
+        
+        try {
+            const response = await fetch('/test/thread-check/', { method: 'POST' });
+            const data = await response.json();
+            
+            printLogs('log-thread', data.logs);
+            
+            if (data.proven) {
+                const expBox = document.getElementById('explain-thread');
+                expBox.style.display = 'block';
+                expBox.innerHTML = `<strong>Status: PROVEN (Same Thread)</strong><br>${data.explanation}<br><br><strong>Caller:</strong> ${data.caller_thread}<br><strong>Receiver:</strong> ${data.receiver_thread}`;
+            }
+        } catch (error) {
+            console.error(error);
+            document.getElementById('log-thread').textContent = 'Error executing request.';
+        } finally {
+            showLoading('btn-thread', false);
+        }
+    }
+
+    async function runTransactionTest() {
+        showLoading('btn-transaction', true);
+        document.getElementById('explain-transaction').style.display = 'none';
+        
+        try {
+            const response = await fetch('/test/transaction-check/', { method: 'POST' });
+            const data = await response.json();
+            
+            printLogs('log-transaction', data.logs);
+            
+            if (data.proven) {
+                const expBox = document.getElementById('explain-transaction');
+                expBox.style.display = 'block';
+                expBox.innerHTML = `<strong>Status: PROVEN (Same Transaction)</strong><br>${data.explanation}`;
+            }
+        } catch (error) {
+            console.error(error);
+            document.getElementById('log-transaction').textContent = 'Error executing request.';
+        } finally {
+            showLoading('btn-transaction', false);
+        }
+    }
+
+    async function runRectangleTest(e) {
+        e.preventDefault();
+        showLoading('btn-rect', true);
+        
+        const form = document.getElementById('rect-form');
+        const formData = new FormData(form);
+        const resultBox = document.getElementById('rect-result');
+        const itemsContainer = document.getElementById('rect-items-container');
+        
+        resultBox.style.display = 'none';
+        itemsContainer.innerHTML = '';
+        
+        try {
+            const response = await fetch('/test/rectangle/', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                resultBox.style.display = 'block';
+                
+                data.yielded_items.forEach((item, index) => {
+                    const key = Object.keys(item)[0];
+                    const val = item[key];
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'rect-item';
+                    itemDiv.innerHTML = `<span>Yield #${index + 1}:</span> <span>{ <span class="rect-key">'${key}'</span>: <span class="rect-val">${val}</span> }</span>`;
+                    itemsContainer.appendChild(itemDiv);
+                });
+                
+                document.getElementById('rect-explanation').textContent = data.explanation;
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Failed to execute Rectangle test.');
+        } finally {
+            showLoading('btn-rect', false);
+        }
+    }
+</script>
+</body>
+</html>
